@@ -1,4 +1,6 @@
 import { Hono } from 'hono'
+import { openai } from '@ai-sdk/openai';
+import { generateText } from 'ai';
 
 const app = new Hono()
 
@@ -6,9 +8,12 @@ app.get('/', (c) => {
   return c.text('Hello Pirate!')
 })
 
-app.get('/name', (c) => {
-  // TODO: generate a random pirate name
-  return c.newResponse(`Here's you pirate name: lol No Pirate name for you`)
+app.get('/name', async(c) => {
+  const { text } = await generateText({
+    model: openai('gpt-3.5-turbo'),
+    prompt: 'Generate a two word pirate ship name',
+  });
+  return c.newResponse(text);
 })
 
 app.get('/image/:name', (c) => {
